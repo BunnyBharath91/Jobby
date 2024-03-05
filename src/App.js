@@ -3,6 +3,7 @@ import Login from './Components/Login'
 import Home from './Components/Home'
 import Jobs from './Components/Jobs'
 import JobItemDetails from './Components/JobItemDetails'
+import NotFound from './Components/NotFound'
 
 import './App.css'
 
@@ -64,6 +65,7 @@ const App = () => (
       )}
     />
     <Route exact path="/jobs/:id" component={JobItemDetails} />
+    <Route component={NotFound} />
   </Switch>
 )
 

@@ -11,11 +11,14 @@ const Header = props => {
 
   return (
     <header className="header-container">
-      <img
-        alt="website logo"
-        src="https://assets.ccbp.in/frontend/react-js/logo-img.png"
-        className="website-logo"
-      />
+      <Link to="/" className="link-element">
+        <img
+          alt="website logo"
+          src="https://assets.ccbp.in/frontend/react-js/logo-img.png"
+          className="website-logo"
+        />
+      </Link>
+
       <ul className="header-components">
         <li className="header-element">
           <Link to="/" className="link-element">
@@ -27,10 +30,12 @@ const Header = props => {
             Jobs
           </Link>
         </li>
+        <li className="header-element logout-button-container">
+          <button type="button" className="logout-button" onClick={onLogout}>
+            Logout
+          </button>
+        </li>
       </ul>
-      <button type="button" className="logout-button" onClick={onLogout}>
-        Logout
-      </button>
     </header>
   )
 }

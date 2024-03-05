@@ -1,5 +1,6 @@
 import {Component} from 'react'
 import {Redirect, Link} from 'react-router-dom'
+import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
 import {FaSearch, FaStar, FaSuitcase, FaSearchLocation} from 'react-icons/fa'
 
@@ -14,9 +15,12 @@ class Jobs extends Component {
     this.state = {
       searchValue: '',
       userDetails: '',
+      selectedSalaryRange: '',
       employmentTypeList: [],
       jobsList: [],
       redirectToLogin: false,
+      fetchingStatus: 'LOADING',
+      fetchingUserDetailsStatus: 'LOADING',
     }
   }
 
@@ -32,9 +36,11 @@ class Jobs extends Component {
   }
 
   renderJobs = async () => {
-    const {searchValue} = this.state
+    const {searchValue, selectedSalaryRange, employmentTypeList} = this.state
     const jwtToken = Cookies.get('jwt_token')
-    const url = `https://apis.ccbp.in/jobs?search=${searchValue.toLowerCase()}`
+    const url = `https://apis.ccbp.in/jobs?employment_type=${employmentTypeList.join(
+      ',',
+    )}&minimum_package=${selectedSalaryRange}&search=${searchValue}`
     const options = {
       method: 'GET',
       headers: {
@@ -56,6 +62,11 @@ class Jobs extends Component {
       }))
       this.setState({
         jobsList: updatedJobsList,
+        fetchingStatus: 'SUCCESS',
+      })
+    } else {
+      this.setState({
+        fetchingStatus: 'FAILURE',
       })
     }
   }
@@ -75,6 +86,11 @@ class Jobs extends Component {
     if (response.ok) {
       this.setState({
         userDetails: data.profile_details,
+        fetchingUserDetailsStatus: 'SUCCESS',
+      })
+    } else {
+      this.setState({
+        fetchingUserDetailsStatus: 'FAILURE',
       })
     }
   }
@@ -90,6 +106,27 @@ class Jobs extends Component {
       <p className="user-bio">{userDetails.short_bio}</p>
     </div>
   )
+
+  onAddDeleteEmploymentType = event => {
+    const {employmentTypeList} = this.state
+    if (employmentTypeList.includes(event.target.id)) {
+      this.setState(
+        {
+          employmentTypeList: employmentTypeList.filter(
+            eachItem => eachItem !== event.target.id,
+          ),
+        },
+        this.renderJobs,
+      )
+    } else {
+      this.setState(
+        {
+          employmentTypeList: [...employmentTypeList, event.target.id],
+        },
+        this.renderJobs,
+      )
+    }
+  }
 
   renderEmploymentTypeContainer = () => {
     const {employmentTypesList} = this.props
@@ -117,6 +154,11 @@ class Jobs extends Component {
     )
   }
 
+  onSelectSalary = event => {
+    console.log(event.target.id)
+    this.setState({selectedSalaryRange: event.target.id}, this.renderJobs)
+  }
+
   renderSalaryRangeContainer = () => {
     const {salaryRangesList} = this.props
     console.log(salaryRangesList)
@@ -131,6 +173,7 @@ class Jobs extends Component {
                 type="radio"
                 name="employment"
                 className="employment-radio"
+                onClick={this.onSelectSalary}
               />
               <label htmlFor={eachItem.salaryRangeId}>{eachItem.label}</label>
             </li>
@@ -184,10 +227,50 @@ class Jobs extends Component {
   }
 
   onSearchChange = event => {
-    this.setState({
-      searchValue: event.target.value,
-    })
+    this.setState(
+      {
+        searchValue: event.target.value,
+      },
+      this.renderJobs,
+    )
   }
+
+  renderLoader = () => (
+    <div data-testid="loader" className="loader-container">
+      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+    </div>
+  )
+
+  renderFailure = () => (
+    <div className="failure-container">
+      <img
+        alt="failure view"
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+        className="failure-img"
+      />
+      <h1 className="failure-heading">Oops! Something Went Wrong</h1>
+      <p className="failure-description">
+        We cannot seem to find the page you are looking for
+      </p>
+      <button type="button" className="retry-button" onClick={this.renderJobs}>
+        Retry
+      </button>
+    </div>
+  )
+
+  renderNoJobs = () => (
+    <div className="failure-container">
+      <img
+        alt="no jobs"
+        src="https://assets.ccbp.in/frontend/react-js/no-jobs-img.png"
+        className="failure-img"
+      />
+      <h1 className="failure-heading">No Jobs Found</h1>
+      <p className="failure-description">
+        We could not find any jobs. Try other filters
+      </p>
+    </div>
+  )
 
   render() {
     const {
@@ -196,6 +279,8 @@ class Jobs extends Component {
       jobsList,
       searchValue,
       redirectToLogin,
+      fetchingStatus,
+      fetchingUserDetailsStatus,
     } = this.state
     console.log(employmentTypeList)
 
@@ -207,7 +292,18 @@ class Jobs extends Component {
         <Header />
         <div className="bottom-container">
           <div className="profile-sorting-container">
-            {this.renderProfileContainer(userDetails)}
+            {fetchingUserDetailsStatus === 'LOADING' && this.renderLoader()}
+            {fetchingUserDetailsStatus === 'FAILURE' && (
+              <button
+                type="button"
+                className="retry-button"
+                onClick={this.renderUserDetails}
+              >
+                Retry
+              </button>
+            )}
+            {fetchingUserDetailsStatus === 'SUCCESS' &&
+              this.renderProfileContainer(userDetails)}
             <hr className="horizontal-line" />
             {this.renderEmploymentTypeContainer()}
             <hr className="horizontal-line" />
@@ -222,10 +318,22 @@ class Jobs extends Component {
                 value={searchValue}
                 onChange={this.onSearchChange}
               />
-              <FaSearch className="search-icon" />
+              <button
+                type="button"
+                data-testid="searchButton"
+                className="search-button"
+                onClick={this.renderJobs}
+                label="search icon"
+              >
+                <FaSearch className="search-icon" />
+              </button>
             </div>
             <ul className="jobs-list">
-              {jobsList.map(eachItem => this.renderJob(eachItem))}
+              {fetchingStatus === 'LOADING' && this.renderLoader()}
+              {fetchingStatus === 'SUCCESS' && jobsList.length === 0
+                ? this.renderNoJobs()
+                : jobsList.map(eachItem => this.renderJob(eachItem))}
+              {fetchingStatus === 'FAILURE' && this.renderFailure()}
             </ul>
           </div>
         </div>
