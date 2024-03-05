@@ -1,0 +1,146 @@
+.jobs-container {
+  min-height: 100vh;
+  background-color: black;
+  color: white;
+}
+.bottom-container {
+  display: flex;
+  padding: 32px 45px;
+}
+.profile-sorting-container {
+  width: 26%;
+  padding: 0px 45px 0px 0px;
+}
+.profile-container {
+  background-image: url('https://assets.ccbp.in/frontend/react-js/profile-bg.png');
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 22px 22px 15px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.user-name {
+  color: #6366f1;
+  font-weight: 500;
+  margin: 0px;
+}
+.user-bio {
+  color: black;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.horizontal-line {
+  height: 2px;
+  margin-bottom: 18px;
+}
+
+.sorting-container-heading {
+  font-size: 22px;
+  font-weight: 500;
+}
+.employment-type-list {
+  padding-left: 0px;
+}
+.employment-type {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  margin: 6px 0px;
+}
+.employment-radio {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+.employment {
+  margin-right: 45px;
+}
+.jobs-list-container {
+  width: 74%;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  height: 45px;
+  width: 600px;
+  border: solid 1px white;
+  border-radius: 4px;
+}
+.jobs-search-input-bar {
+  height: 100%;
+  width: 550px;
+  background-color: transparent;
+  padding: 6px 12px;
+  border: none;
+  font-size: 18px;
+  color: white;
+}
+.search-icon {
+  font-size: 24px;
+  margin-left: 12px;
+}
+
+.job-card {
+  width: 90%;
+  list-style-type: none;
+  background-color: #272727;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+.job-card-upper-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.job-card-img {
+  width: 60px;
+  margin-right: 14px;
+}
+.role {
+  margin-top: 0px;
+  font-size: 18px;
+}
+.rating-card {
+  padding-bottom: 6px;
+}
+.icon {
+  margin-right: 6px;
+}
+.job-card-middle-container {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+.location {
+  font-size: 22px;
+  margin-right: 12px;
+}
+.suitcase {
+  font-size: 22px;
+  margin: 0px 6px 0px 20px;
+}
+.package-per-annum {
+  font-size: 15px;
+  margin-left: auto;
+}
+.description-heading {
+  margin: 0px;
+  font-size: 28px;
+  font-weight: 500;
+}
+.job-description {
+  font-size: 18px;
+  font-weight: 500;
+}
+.link {
+  text-decoration: none;
+  color: inherit;
+}
